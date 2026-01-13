@@ -1,0 +1,53 @@
+---
+// MY PAGE
+---
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MY PAGE | nikki-1K</title>
+    <style>
+        :root { --bg-color: #0d0d0d; --text-color: #00ff41; --border-color: #333; --font-main: 'Courier New', Courier, monospace; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-main); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { width: 100%; max-width: 600px; padding: 2rem 1rem; border-bottom: 1px solid var(--border-color); }
+        nav a { color: var(--text-color); text-decoration: none; margin-right: 1.5rem; border: 1px solid var(--text-color); padding: 2px 8px; }
+        main { width: 100%; max-width: 600px; padding: 2rem 1rem; }
+        .editor-container { border: 1px solid var(--text-color); padding: 1rem; margin-top: 1rem; }
+        textarea { width: 100%; height: 300px; background: transparent; color: var(--text-color); border: none; outline: none; font-family: var(--font-main); font-size: 1rem; resize: none; }
+        .status-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.8rem; }
+        button { background: var(--text-color); color: var(--bg-color); border: none; padding: 0.5rem 1.5rem; cursor: pointer; font-family: var(--font-main); font-weight: bold; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>nikki-1K / MY PAGE</h1>
+    <nav>
+        <a href="./">HOME</a>
+        <a href="./mypage">MY PAGE</a>
+    </nav>
+</header>
+<main>
+    <div class="editor-container">
+        <textarea id="entry" placeholder="いま、何を考えていますか？ (1000文字以内)"></textarea>
+        <div class="status-bar">
+            <div id="counter">0 / 1000</div>
+            <button>POST</button>
+        </div>
+    </div>
+</main>
+<script>
+    const textarea = document.getElementById('entry');
+    const counter = document.getElementById('counter');
+    textarea.addEventListener('input', () => {
+        const length = textarea.value.length;
+        counter.textContent = `${length} / 1000`;
+        if (length > 1000) {
+            counter.style.color = 'red';
+        } else {
+            counter.style.color = 'var(--text-color)';
+        }
+    });
+</script>
+</body>
+</html>
