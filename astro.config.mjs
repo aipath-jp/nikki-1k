@@ -1,6 +1,12 @@
 import { defineConfig } from 'astro/config';
+import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
-  site: 'https://aipath-jp.github.io',
-  base: '/nikki-1k',
+  output: "server", // サーバーモードに変更
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true,
+    },
+  }),
+  // GitHub Pages用の設定は不要になるので、シンプルにします
 });
