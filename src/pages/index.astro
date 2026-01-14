@@ -54,12 +54,15 @@ try {
         white-space: pre-wrap; /* 改行をそのまま表示 */
         line-height: 1.6;
       }
-      .post-date {
-        font-size: 0.8rem;
-        opacity: 0.7;
-        margin-bottom: 10px;
-        border-bottom: 1px solid #333;
-        display: block;
+     .post-card {
+        border: 1px dashed #00ff00;
+        padding: 20px;
+        margin-bottom: 30px;
+        white-space: pre-wrap; /* 改行をそのまま表示 */
+        line-height: 1.6;
+        /* --- ここから下の2行を追加 --- */
+        overflow-wrap: break-word; /* 枠の端で自動改行させる */
+        word-break: break-all;     /* 長い英数字も強制的に改行させる */
       }
       .empty-msg {
         text-align: center;
