@@ -5,7 +5,8 @@ let error = null;
 
 try {
   const db = (Astro.locals as any).runtime.env.DB;
-  const { results } = await db.prepare("SELECT * FROM posts ORDER BY RANDOM()").all();
+  // LIMIT 10 を最後に追加します
+  const { results } = await db.prepare("SELECT * FROM posts ORDER BY RANDOM() LIMIT 10").all();
   posts = results;
 } catch (e: any) {
   error = e.message;
