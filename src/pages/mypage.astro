@@ -59,7 +59,7 @@
       #char-count {
         font-size: 1rem;
       }
-      /* 500文字未満の時に数字を赤くするスタイル */
+      /* 100文字未満の時に数字を赤くするスタイル */
       .short-text {
         color: #ff0000;
       }
@@ -89,7 +89,7 @@
     </nav>
 
     <div class="editor-container">
-      <textarea id="diary-input" maxlength="1000" placeholder="500文字以上入力してください..."></textarea>
+      <textarea id="diary-input" maxlength="1000" placeholder="100文字以上入力してください..."></textarea>
       <div class="controls">
         <div id="counter">
           <span id="char-count" class="short-text">0</span>/1000
@@ -108,8 +108,8 @@
         const length = textarea.value.length;
         charCount.textContent = length;
         
-        // 500文字未満なら赤、以上なら緑にする
-        if (length < 500) {
+        // 100文字未満なら赤、以上なら緑にする
+        if (length < 100) {
           charCount.classList.add("short-text");
         } else {
           charCount.classList.remove("short-text");
@@ -121,9 +121,9 @@
         const content = textarea.value.trim();
         const length = content.length;
 
-        // 【追加】500文字未満のバリデーション
-        if (length < 500) {
-          alert(`あと ${500 - length} 文字足りません。500文字以上書いてください。`);
+        // 【追加】100文字未満のバリデーション
+        if (length < 100) {
+          alert(`あと ${100 - length} 文字足りません。100文字以上書いてください。`);
           return;
         }
 
