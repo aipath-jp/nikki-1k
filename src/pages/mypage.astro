@@ -1,53 +1,159 @@
 ---
-// MY PAGE
+// フロントエンドの設定
 ---
-<!DOCTYPE html>
+
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MY PAGE | nikki-1K</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MY PAGE | nikki-1k</title>
     <style>
-        :root { --bg-color: #0d0d0d; --text-color: #00ff41; --border-color: #333; --font-main: 'Courier New', Courier, monospace; }
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-main); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        header { width: 100%; max-width: 600px; padding: 2rem 1rem; border-bottom: 1px solid var(--border-color); }
-        nav a { color: var(--text-color); text-decoration: none; margin-right: 1.5rem; border: 1px solid var(--text-color); padding: 2px 8px; }
-        main { width: 100%; max-width: 600px; padding: 2rem 1rem; }
-        .editor-container { border: 1px solid var(--text-color); padding: 1rem; margin-top: 1rem; }
-        textarea { width: 100%; height: 300px; background: transparent; color: var(--text-color); border: none; outline: none; font-family: var(--font-main); font-size: 1rem; resize: none; }
-        .status-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.8rem; }
-        button { background: var(--text-color); color: var(--bg-color); border: none; padding: 0.5rem 1.5rem; cursor: pointer; font-family: var(--font-main); font-weight: bold; }
+      body {
+        background-color: #000;
+        color: #00ff00;
+        font-family: 'Courier New', Courier, monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+      }
+      nav {
+        margin-bottom: 40px;
+      }
+      nav a {
+        color: #00ff00;
+        text-decoration: none;
+        margin: 0 15px;
+        border: 1px solid #00ff00;
+        padding: 5px 10px;
+      }
+      nav a:hover {
+        background-color: #00ff00;
+        color: #000;
+      }
+      .editor-container {
+        width: 100%;
+        max-width: 600px;
+      }
+      textarea {
+        width: 100%;
+        height: 300px;
+        background-color: #000;
+        color: #00ff00;
+        border: 1px solid #00ff00;
+        padding: 15px;
+        font-size: 1.2rem;
+        font-family: inherit;
+        resize: none;
+        outline: none;
+        box-sizing: border-box;
+      }
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+      }
+      #char-count {
+        font-size: 1rem;
+      }
+      /* 500文字未満の時に数字を赤くするスタイル */
+      .short-text {
+        color: #ff0000;
+      }
+      button {
+        background-color: #000;
+        color: #00ff00;
+        border: 1px solid #00ff00;
+        padding: 10px 30px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      button:hover {
+        background-color: #00ff00;
+        color: #000;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     </style>
-</head>
-<body>
-<header>
-    <h1>nikki-1K / MY PAGE</h1>
+  </head>
+  <body>
     <nav>
-        <a href="./">HOME</a>
-        <a href="./mypage">MY PAGE</a>
+      <a href="/">INDEX</a>
+      <a href="/mypage">MY PAGE</a>
     </nav>
-</header>
-<main>
+
     <div class="editor-container">
-        <textarea id="entry" placeholder="いま、何を考えていますか？ (1000文字以内)"></textarea>
-        <div class="status-bar">
-            <div id="counter">0 / 1000</div>
-            <button>POST</button>
+      <textarea id="diary-input" maxlength="1000" placeholder="500文字以上入力してください..."></textarea>
+      <div class="controls">
+        <div id="counter">
+          <span id="char-count" class="short-text">0</span>/1000
         </div>
+        <button id="post-btn">POST</button>
+      </div>
     </div>
-</main>
-<script>
-    const textarea = document.getElementById('entry');
-    const counter = document.getElementById('counter');
-    textarea.addEventListener('input', () => {
+
+    <script>
+      const textarea = document.getElementById("diary-input");
+      const charCount = document.getElementById("char-count");
+      const postBtn = document.getElementById("post-btn");
+
+      // 文字数カウント & 色の変化
+      textarea.addEventListener("input", () => {
         const length = textarea.value.length;
-        counter.textContent = `${length} / 1000`;
-        if (length > 1000) {
-            counter.style.color = 'red';
+        charCount.textContent = length;
+        
+        // 500文字未満なら赤、以上なら緑にする
+        if (length < 500) {
+          charCount.classList.add("short-text");
         } else {
-            counter.style.color = 'var(--text-color)';
+          charCount.classList.remove("short-text");
         }
-    });
-</script>
-</body>
+      });
+
+      // POSTボタンの処理
+      postBtn.addEventListener("click", async () => {
+        const content = textarea.value.trim();
+        const length = content.length;
+
+        // 【追加】500文字未満のバリデーション
+        if (length < 500) {
+          alert(`あと ${500 - length} 文字足りません。500文字以上書いてください。`);
+          return;
+        }
+
+        postBtn.disabled = true;
+        postBtn.textContent = "SENDING...";
+
+        try {
+          const response = await fetch("/api/posts", {
+            method: "POST",
+            body: JSON.stringify({ content }),
+            headers: { "Content-Type": "application/json" }
+          });
+
+          if (response.ok) {
+            alert("保存しました！");
+            textarea.value = "";
+            charCount.textContent = "0";
+            charCount.classList.add("short-text");
+          } else {
+            const errorData = await response.json();
+            alert("エラー: " + (errorData.error || "保存に失敗しました"));
+          }
+        } catch (e) {
+          console.error(e);
+          alert("通信エラーが発生しました。");
+        } finally {
+          postBtn.disabled = false;
+          postBtn.textContent = "POST";
+        }
+      });
+    </script>
+  </body>
 </html>
