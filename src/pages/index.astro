@@ -6,7 +6,7 @@ let error = null;
 try {
   const db = (Astro.locals as any).runtime.env.DB;
   // 日記なので RANDOM() よりも新しい順（DESC）が見やすいかもしれません
-  const { results } = await db.prepare("SELECT * FROM posts ORDER BY created_at DESC LIMIT 10").all();
+  const { results } = await db.prepare("SELECT * FROM posts ORDER BY RANDOM() LIMIT 5").all();
   posts = results;
 } catch (e: any) {
   error = e.message;
@@ -21,7 +21,7 @@ try {
     <link rel="icon" type="image/png" href="https://github.com/user-attachments/assets/412aada4-e33d-4766-9f3e-a24dab07b310" />
     <link rel="apple-touch-icon" href="https://github.com/user-attachments/assets/412aada4-e33d-4766-9f3e-a24dab07b310" />
   
-    <title>HOME | nikki-1k</title>
+    <title>READ | nikki-1k</title>
     <style>
       /* スタイルはそのまま */
       body {
@@ -73,7 +73,7 @@ try {
     <h1>nikki-1K</h1> 
 
     <nav>
-      <a href="/">HOME</a>
+      <a href="/">READ</a>
       <a href="/mypage">WRITE</a>
     </nav>
 
