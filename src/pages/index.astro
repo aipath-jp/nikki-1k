@@ -5,7 +5,6 @@ let error = null;
 
 try {
   const db = (Astro.locals as any).runtime.env.DB;
-  // LIMIT 10 を最後に追加します
   const { results } = await db.prepare("SELECT * FROM posts ORDER BY RANDOM() LIMIT 10").all();
   posts = results;
 } catch (e: any) {
@@ -30,9 +29,8 @@ try {
         margin: 0;
         padding: 20px;
       }
-      nav {
-        margin-bottom: 40px;
-      }
+      h1 { font-size: 1.5rem; letter-spacing: 2px; }
+      nav { margin-bottom: 40px; }
       nav a {
         color: #00ff00;
         text-decoration: none;
@@ -52,18 +50,17 @@ try {
         border: 1px dashed #00ff00;
         padding: 20px;
         margin-bottom: 30px;
-        white-space: pre-wrap; /* 改行をそのまま表示 */
+        white-space: pre-wrap;
         line-height: 1.6;
+        /* 英語の改行設定 */
+        overflow-wrap: break-word;
+        word-break: normal;
       }
-     .post-card {
-        border: 1px dashed #00ff00;
-        padding: 20px;
-        margin-bottom: 30px;
-        white-space: pre-wrap; /* 改行をそのまま表示 */
-        line-height: 1.6;
-        /* --- ここから下の2行を追加 --- */
-        overflow-wrap: break-word; /* 枠の端で自動改行させる */
-        word-break: break-all;     /* 長い英数字も強制的に改行させる */
+      .post-date {
+        display: block;
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+        opacity: 0.7;
       }
       .empty-msg {
         text-align: center;
@@ -81,7 +78,7 @@ try {
     </nav>
 
     <div class="posts-container">
-      {error && <p style="color: red;">Error: {error}</p>}
+      {error && <p style="color: #ff0000;">Error: {error}</p>}
       
       {posts.length === 0 ? (
         <p class="empty-msg">No posts recorded yet...</p>
