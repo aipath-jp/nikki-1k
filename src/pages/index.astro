@@ -5,12 +5,14 @@ let error = null;
 
 try {
   const db = (Astro.locals as any).runtime.env.DB;
-  // 日記なので RANDOM() よりも新しい順（DESC）が見やすいかもしれません
-  const { results } = await db.prepare("SELECT * FROM posts ORDER BY RANDOM() LIMIT 5").all();
+  const { results } = await db.prepare("SELECT * FROM posts ORDER BY created_at DESC LIMIT 3").all();
   posts = results;
 } catch (e: any) {
   error = e.message;
 }
+
+// 開発者コメントの内容（ここに好きな文章を入れてください）
+const devComment = "Tap READ to see 3 random posts. I made this to log my own dreams, but I'm curious about yours too, which doesn't mean you must write about them though. I only give this URL to people I personally like, but likewise, you can have one friend of yours here if you want. Anonymous, minimal and immutable. ";
 ---
 
 <html lang="ja">
@@ -23,7 +25,6 @@ try {
   
     <title>READ | nikki-1k</title>
     <style>
-      /* スタイルはそのまま */
       body {
         background-color: #000;
         color: #00ff00;
@@ -44,29 +45,60 @@ try {
         border: 1px solid #00ff00;
         padding: 5px 10px;
       }
-      nav a:hover {
-        background-color: #00ff00;
-        color: #000;
-      }
-      .posts-container {
-        width: 100%;
-        max-width: 800px;
-      }
+      nav a:hover { background-color: #00ff00; color: #000; }
+
+      .posts-container { width: 100%; max-width: 800px; flex: 1; }
       .post-card {
         border: 1px dashed #00ff00;
         padding: 20px;
         margin-bottom: 30px;
         white-space: pre-wrap;
-        line-height: 1.6;
-        overflow-wrap: break-word;
-        word-break: normal;
       }
-      .post-date {
+      .post-date { display: block; font-size: 0.8rem; margin-bottom: 10px; opacity: 0.7; }
+
+      /* フッター & ポップアップ用スタイル */
+      footer {
+        margin-top: 60px;
+        padding: 20px 0;
+        width: 100%;
+        max-width: 800px;
+        border-top: 1px double #00ff00;
+        text-align: center;
+      }
+      .dev-btn {
+        background: none;
+        border: none;
+        color: #00ff00;
+        font-family: inherit;
+        font-size: 0.75rem;
+        opacity: 0.4;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .dev-btn:hover { opacity: 1; text-shadow: 0 0 8px #00ff00; }
+
+      dialog {
+        background: #000;
+        color: #00ff00;
+        border: 2px solid #00ff00;
+        padding: 20px;
+        max-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+      }
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.8);
+      }
+      .close-btn {
         display: block;
-        font-size: 0.8rem;
-        margin-bottom: 10px;
-        opacity: 0.7;
+        margin-top: 20px;
+        color: #00ff00;
+        background: none;
+        border: 1px solid #00ff00;
+        cursor: pointer;
+        font-family: inherit;
+        width: 100%;
       }
+      .close-btn:hover { background: #00ff00; color: #000; }
     </style>
   </head>
   <body>
@@ -85,7 +117,6 @@ try {
       ) : (
         posts.map((post) => (
           <div class="post-card">
-            {/* タイムゾーンを日本時間に固定して表示 */}
             <span class="post-date">
               {new Date(post.created_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}
             </span>
@@ -94,5 +125,28 @@ try {
         ))
       )}
     </div>
+
+    <footer>
+      <button id="openDialog" class="dev-btn">[SYSTEM_LOG: READ_DEV_COMMENTS]</button>
+    </footer>
+
+    <dialog id="devDialog">
+      <p style="white-space: pre-wrap;">{devComment}</p>
+      <button id="closeDialog" class="close-btn">CLOSE</button>
+    </dialog>
+
+    <script>
+      const dialog = document.getElementById('devDialog') as HTMLDialogElement;
+      const openBtn = document.getElementById('openDialog');
+      const closeBtn = document.getElementById('closeDialog');
+
+      openBtn?.addEventListener('click', () => dialog.showModal());
+      closeBtn?.addEventListener('click', () => dialog.close());
+
+      // 外側クリックで閉じる設定
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+    </script>
   </body>
 </html>
